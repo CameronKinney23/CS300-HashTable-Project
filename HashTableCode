@@ -1,0 +1,103 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+//structure for course information that includes ID, Title, and prerequisites
+struct Course {
+	string courseID;
+	string title;
+	vector<string> prerequisites;
+};
+
+//hash table that stores course information that uses courseID as the key
+unordered_map<string, Course> courseTable;
+
+//function to load class data into the hash table
+void loadDataStructure() {
+    //adds courses to the hash table with their ID, title, and prerequisites 
+    courseTable["CSCI100"] = { "CSCI100", "Introduction to Computer Science", {} }; //no prerequisites
+    courseTable["CSCI101"] = { "CSCI101", "Introduction to Programming in C++", {"CSCI100"} }; //requires CSCI100
+    courseTable["CSCI200"] = { "CSCI200", "Data Structures", {"CSCI101"} }; //requires CSCI101
+    courseTable["CSCI301"] = { "CSCI301", "Advanced Programming in C++", {"CSCI200"} }; //requires CSCI200
+    courseTable["CSCI300"] = { "CSCI300", "Introduction to Algorithms", {"CSCI200"} };//requires CSCI200
+    courseTable["CSCI350"] = { "CSCI350", "Operating Systems", {"CSCI300"} }; //requires CSCI300
+    courseTable["CSCI400"] = { "CSCI400", "Large Software Development", {"CSCI301", "CSCI350"} };//requires CSCI301 and CSCI350
+    courseTable["MATH201"] = { "MATH201", "Discrete Mathematics", {} }; // no prerequisites
+    //informs user that data structure is loaded
+    cout << "Data structure loaded." << endl;
+}
+
+//function to print all courses in the course table
+void printCourseList() {
+    cout << "Here is a sample schedule:" << endl;
+    //iterate through the hash table and print each course ID and title
+    for (const auto& course : courseTable) {
+        cout << course.second.courseID << ", " << course.second.title << endl;
+    }
+}
+
+//function to print a specific course based on its courseID, including its prerequisites
+void printCourses(string courseID) {
+    //check if the course exists in the hash table
+    if (courseTable.find(courseID) != courseTable.end()) {
+        Course course = courseTable[courseID];//retrieves course object
+        cout << course.courseID << ", " << course.title << endl;
+        //if there are prerequisites then print them
+        if (!course.prerequisites.empty()) {
+            cout << "Prerequisites: ";
+            for (const auto& pre : course.prerequisites) {
+                //print each prerequisites
+                cout << pre << " "; 
+            }
+            cout << endl;
+        }
+    }
+    else {
+        //let user know course was not found
+        cout << "Course not found!" << endl;
+    }
+}
+
+int main() {
+    int choice; //variable that stores user choice from menu
+    string courseID; //variable to store course ID input from the user
+
+    do {
+        //display menu options to the user
+        cout << "1. Load Data Structure." << endl;
+        cout << "2. Print Course List." << endl;
+        cout << "3. Print Course." << endl;
+        cout << "9. Exit" << endl;
+        cout << "What would you like to do? ";
+        //get users choice
+        cin >> choice;
+
+        //switch case that handles different user inputs 
+        switch (choice) {
+        case 1:
+            loadDataStructure(); //load courses into the hash table
+            break;
+        case 2:
+            printCourseList(); //display list of courses
+            break;
+        case 3:
+            //ask for courseID then print out course details
+            cout << "What course do you want to know about?? ";
+            cin >> courseID;
+            printCourses(courseID);
+            break;
+        case 9:
+            cout << "Thank you for using the course planner!" << endl;
+            break;
+        default:
+            //if user enters invalid option
+            cout << choice << " is not a valid option." << endl;
+            break;
+        }
+    } while (choice != 9); //continue until user enters '9' to end the program
+
+    return 0;
+}
